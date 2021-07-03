@@ -21,18 +21,34 @@ public class MyArrayList<E extends Comparable<E>> {
 
     public void add(E item) {
         //  проверить переполнение и при необходимости увеличиваем массив на size/2 +1
-        list[size] = item;
-        size++;
+        if(size == list.length - 1){
+            resizing();
+        } else {
+            list[size] = item;
+            size++;
+        }
+    }
+
+    public void resizing(){  //Увеличение размера list
+        E[] temp;
+        temp = Arrays.copyOf(list,size+(size/2 +1));
+        list = temp;
     }
 
     public void add(int index, E item) {
         // проверить корректность index  [0..size]
         //  проверить переполнение и при необходимости увеличиваем массив на size/2 +1
-        for (int i = size; i > index; i--) {
-            list[i] = list[i - 1];
+        if (index >= 0 && index <= size) {
+            if (size == list.length - 1) {
+                resizing();
+            } else {
+                for (int i = size; i > index; i--) {
+                    list[i] = list[i - 1];
+                }
+                list[index] = item;
+                size++;
+            }
         }
-        list[index] = item;
-        size++;
     }
 
     public void remove(int index) {
@@ -40,11 +56,15 @@ public class MyArrayList<E extends Comparable<E>> {
             throw new NoSuchElementException();
         }
         // проверить корректность index  [0..size)
-        for (int i = index; i <= size; i++) {
-            list[i] = list[i + 1];
+        if (index >= 0 && index <= size) {
+            for (int i = index; i <= size; i++) {
+                list[i] = list[i + 1];
+            }
+            size--;
+            list[size] = null;
+        } else{
+            throw new NoSuchElementException();
         }
-        size--;
-        list[size] = null;
     }
 
     public boolean remove(E item) {
@@ -58,7 +78,10 @@ public class MyArrayList<E extends Comparable<E>> {
 
     public E get(int index) {
         // проверить корректность index  [0..size)
-        return list[index];
+        if (index >= 0 && index <= size) {
+            return list[index];
+        }
+        throw new NoSuchElementException();
     }
 
     public boolean contains(E item) {
